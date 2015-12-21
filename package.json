@@ -1,6 +1,32 @@
 {
   "name": "wgraph",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "licence": "MIT",
+  "description": "An optionnal thin abstraction layer of LevelGraph",
+  "author": "Brice Colucci <brice.colucci@gmail.com>",
+  "keywords": [
+    "graph",
+    "levelgraph",
+    "leveldb",
+    "edge",
+    "vertex",
+    "relation"
+  ],
+  "scripts": {
+    "build": "babel -d lib src --source-maps",
+    "test": "mocha lib/test",
+    "pretest": "npm run build",
+    "prepublish": "npm run build"
+  },
+  "babel": {
+    "presets": [
+      "es2016-node5"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wuha-io/wgraph.git"
+  },
   "dependencies": {
     "leveldown": "^1.4.3",
     "levelgraph": "^1.1.0",
@@ -12,16 +38,5 @@
     "babel-cli": "^6.3.17",
     "babel-preset-es2016-node5": "^1.1.2",
     "mocha": "^2.3.4"
-  },
-  "scripts": {
-    "build": "babel -d lib src --source-maps",
-    "test": "mocha lib/test",
-    "pretest": "npm run build",
-    "prepublish": "npm run build"
-  },
-  "babel": {
-    "presets": [
-      "es2016-node5"
-    ]
   }
 }
