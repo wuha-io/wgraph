@@ -4,6 +4,7 @@
 An optionnal thin abstraction layer of [LevelGraph](https://github.com/mcollina/levelgraph) for internal purposes.
 LevelGraph use [LevelDB](http://code.google.com/p/leveldb/), as this layer do for edges and relations properties. 
 
+**Help is welcome!**
 
 ## Table of Contents
 
@@ -15,16 +16,16 @@ LevelGraph use [LevelDB](http://code.google.com/p/leveldb/), as this layer do fo
 
 ## Install
 
-		npm i -g babel babel-cli mocha
-		npm i -S wgraph
+	npm i -g babel babel-cli mocha
+	npm i -S wgraph
 
 ## Build
 
-		npm run build
+	npm run build
 
 ## Test
 
-		npm run test
+	npm run test
 
 ## Usage
 
@@ -48,9 +49,9 @@ arnaud.save()
 //TODO more examples
 ```
 
-## License MIT
+## License
 
-Copyright (c) 2015 Wuha.io
+MIT / Copyright (c) 2015 Wuha.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
