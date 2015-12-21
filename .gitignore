@@ -1,4 +1,5 @@
 node_modules/
-lib/
 lib/test/db
+lib/test/fgraph
+lib/test/graph
 npm-debug.log
