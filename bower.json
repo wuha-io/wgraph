@@ -1,0 +1,17 @@
+{
+  "name": "wgraph",
+  "authors": [
+    "Brice Colucci <brice.colucci@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/wuha-io/wgraph",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "cytoscape": "~2.5.3",
+    "jquery-jsonview": "~1.2.3"
+  }
+}

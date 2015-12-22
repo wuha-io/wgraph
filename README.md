@@ -4,7 +4,7 @@
 An optionnal thin abstraction layer of [LevelGraph](https://github.com/mcollina/levelgraph) for internal purposes.
 LevelGraph use [LevelDB](http://code.google.com/p/leveldb/), as this layer do for edges and relations properties. 
 
-**Help is welcome!**
+** /!\ ==== Help is welcome! :) ==== /!\ **
 
 ## Table of Contents
 
@@ -12,6 +12,7 @@ LevelGraph use [LevelDB](http://code.google.com/p/leveldb/), as this layer do fo
 	* [Build](#build)
 	* [Test](#test)
 * [Usage](#usage)
+* [Visualize](#visualize)
 * [License MIT](#license)
 
 ## Install
@@ -48,6 +49,12 @@ arnaud.save()
 
 //TODO more examples
 ```
+## Visualize
+
+	node lib/example/server.js
+	// check http://localhost
+
+![Logo](https://raw.githubusercontent.com/wuha-io/wgraph/master/screenshot.png)
 
 ## License
 
