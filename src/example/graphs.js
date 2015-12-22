@@ -3,17 +3,17 @@ import WGraph from '../wgraph'
 
 let buildPointGraph = () => {
 	let g = new WGraph('lib/example/graph-point')
-	let brice = g.edge('brice', {age: 28, sex: 'male'})
+	let brice = g.node('brice', {age: 28, sex: 'male'})
 	brice.save()
 	return g
 }
 
 let buildSimpleGraph = () => {
 	let g = new WGraph('lib/example/graph-simple')
-	let brice = g.edge('brice', {age: 28})
-	let arnaud = g.edge('arnaud')
-	let sacha = g.edge('sacha')
-	let antonin = g.edge('antonin')
+	let brice = g.node('brice', {age: 28})
+	let arnaud = g.node('arnaud')
+	let sacha = g.node('sacha')
+	let antonin = g.node('antonin')
 	brice.rel('knows', arnaud)
 	brice.rel('knows', sacha)
 	arnaud.rel('knows', brice)

@@ -4,7 +4,7 @@ import levelup from 'levelup'
 import levelgraph from 'levelgraph'
 import rsvp from 'rsvp'
 
-import Edge from './edge'
+import Node from './node'
 import LevelDbProperties from './leveldbprops'
 
 class WGraph {
@@ -27,17 +27,17 @@ class WGraph {
 
 	triplets() { return this.graph.searchStream(this.triplet()) }
 
-	edge(index, properties) { 
-		let edge = new Edge(this, index)
-		if (properties) edge.props.set(properties)
-		return edge
+	node(index, properties) { 
+		let node = new Node(this, index)
+		if (properties) node.props.set(properties)
+		return node
 	}
 
-	edges() { 
-		let edges = {}
+	nodes() { 
+		let nodes = {}
 		for (let i in arguments) 
-			edges[arguments[i]] = this.edge(arguments[i])
-		return edges
+			nodes[arguments[i]] = this.node(arguments[i])
+		return nodes
 	}
 
 	_fetch(fn) { return this.triplets().on('data', fn) }
@@ -77,13 +77,13 @@ class WGraph {
 			}
 			this.graph.search(search, (err, triplets) => {
 				if (err) return reject(err)
-				let loadEdges = triplets.map(triplet => {
-					return new Edge(this, triplet.subject).load()
+				let loadNodes = triplets.map(triplet => {
+					return new Node(this, triplet.subject).load()
 				})
-				rsvp.all(loadEdges).then(edges => {
-					if (args.length === 1) return resolve(edges.shift())
+				rsvp.all(loadNodes).then(nodes => {
+					if (args.length === 1) return resolve(nodes.shift())
 					var result = {}
-					edges.forEach(edge => result[edge.index] = edge)
+					nodes.forEach(node => result[node.index] = node)
 					resolve(result)
 				}).catch(reject)
 			})
@@ -105,11 +105,11 @@ class WGraph {
 			}).on('end', () => { 
 				nodes = nodes.filter((n, i, arr) => { return arr.indexOf(n) === i })
 				let nodeProps = nodes.map(node => {
-					let nodeNs = util.format('__props:edge:%s', node)
+					let nodeNs = util.format('__props:node:%s', node)
 					return new LevelDbProperties(this.db).map(nodeNs)
 				})
 				let edgeProps = edges.map(edge => {
-					let propsNs = util.format('__props:rel:%s:%s:%s', edge.subject, edge.predicate, edge.object)
+					let propsNs = util.format('__props:edge:%s:%s:%s', edge.subject, edge.predicate, edge.object)
 					return new LevelDbProperties(this.db).map(propsNs)
 				})
 				let props = {nodes: [], edges: []}

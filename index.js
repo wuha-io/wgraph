@@ -1,2 +1,2 @@
 
-module.exports = require('./lib').default;
+module.exports = require('./lib/wgraph').default;

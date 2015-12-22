@@ -35,12 +35,14 @@ import WGraph from 'wgraph'
 
 let graph = new WGraph('mydb')
 
-let brice = graph.edge('brice')
+let brice = graph.node('brice')
 brice.props.set({age: 27, sex: 'male'})
 
-let arnaud = graph.edge('arnaud')
+let arnaud = graph.node('arnaud')
 
-let rel = brice.rel('knows', arnaud, {since: '2015/11/01'})
+// brice knows arnaud edge
+brice.rel('knows', arnaud, {since: '2015/11/01'})
+
 arnaud.save()
 	.then(() => { brice.save() })
 	.then(() => {

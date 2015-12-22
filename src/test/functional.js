@@ -27,22 +27,22 @@ it('Functionnal test', done => {
 
 	let loadFixtures = () => {
 		return rsvp.all([
-			graph.edge('brice').load(),
-			graph.edge('arnaud').load()
-		]).then(edges => {
+			graph.node('brice').load(),
+			graph.node('arnaud').load()
+		]).then(nodes => {
 			return rsvp.all([
-				edges[0].props.map(), // brice properties
-				edges[1].props.map(), // arnaud properties
-				edges[0].relations['knows:arnaud'].props.map(), // brice->arnaud properties
-				edges[1].relations['knows:brice'].props.map(), // arnaud->brice properties
+				nodes[0].props.map(), // brice properties
+				nodes[1].props.map(), // arnaud properties
+				nodes[0].edges['knows:arnaud'].props.map(), // brice->arnaud properties
+				nodes[1].edges['knows:brice'].props.map(), // arnaud->brice properties
 			])
 		})
 	}
 
 	let graph = new WGraph(__dirname + '/fgraph')
 
-	let brice = graph.edge('brice')
-	let arnaud = graph.edge('arnaud')
+	let brice = graph.node('brice')
+	let arnaud = graph.node('arnaud')
 
 	graph
 		.clear()

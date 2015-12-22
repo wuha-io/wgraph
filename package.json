@@ -1,6 +1,6 @@
 {
   "name": "wgraph",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "licence": "MIT",
   "description": "An optionnal thin abstraction layer of LevelGraph",
   "author": "Brice Colucci <brice.colucci@gmail.com>",

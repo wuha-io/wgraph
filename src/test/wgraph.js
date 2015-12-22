@@ -3,7 +3,7 @@ import assert from 'assert'
 import rsvp from 'rsvp'
 
 import WGraph from '../wgraph'
-import Edge from '../edge'
+import Node from '../node'
 
 describe('WGraph', () => {
 
@@ -40,21 +40,21 @@ describe('WGraph', () => {
     assert.strictEqual(triplet.object, 'arnaud')
   })
 
-  it('should create edges', () => {
-    let brice = graph.edge('brice')
-    assert.strictEqual(brice.constructor.name, 'Edge')
+  it('should create nodes', () => {
+    let brice = graph.node('brice')
+    assert.strictEqual(brice.constructor.name, 'Node')
     assert.strictEqual(brice.index, 'brice')
-    let briceAndSacha = graph.edges('brice', 'sacha')
-    assert.strictEqual(briceAndSacha.brice.constructor.name, 'Edge')
+    let briceAndSacha = graph.nodes('brice', 'sacha')
+    assert.strictEqual(briceAndSacha.brice.constructor.name, 'Node')
     assert.strictEqual(briceAndSacha.brice.index, 'brice')
-    assert.strictEqual(briceAndSacha.sacha.constructor.name, 'Edge')
+    assert.strictEqual(briceAndSacha.sacha.constructor.name, 'Node')
     assert.strictEqual(briceAndSacha.sacha.index, 'sacha')
   })
 
-  describe('Edge', () => {
+  describe('Node', () => {
 
     it('should be loaded even if not exists', done => {
-      let brice = graph.edge('brice')
+      let brice = graph.node('brice')
       assert(brice.standalone())
       brice.load().then(() => {
         assert(brice.standalone())
@@ -63,7 +63,7 @@ describe('WGraph', () => {
     })
 
     it('should be saved (no relations)', done => {
-      let brice = graph.edge('brice')
+      let brice = graph.node('brice')
       assert(brice.standalone())
       brice.save().then(() => {
         assert(brice.standalone())
@@ -71,14 +71,14 @@ describe('WGraph', () => {
         graph.graph.search(search, (err, triplets) => {
           if (err) return done(err)
           assert.strictEqual(triplets.length, 1)
-          assert.strictEqual(triplets.shift().predicate, Edge.SELF_PREDICATE)
+          assert.strictEqual(triplets.shift().predicate, Node.SELF_PREDICATE)
           done()
         })
       }).catch(done)
     })
 
     it('should have properties', done => {
-      let brice = graph.edge('brice')
+      let brice = graph.node('brice')
       brice.props.clear()
         .then(() => { return brice.props.map() })
         .then(data0 => {
@@ -97,14 +97,14 @@ describe('WGraph', () => {
     let brice
     let arnaud
 
-    it('should be related to other edges', () => {
-      brice = graph.edge('brice')
-      arnaud = graph.edge('arnaud')
-      let rel = brice.rel('knows', arnaud)
-      assert.strictEqual(rel.constructor.name, 'Relation')
-      assert.strictEqual(rel.subject.index, brice.index)
-      assert.strictEqual(rel.predicate, 'knows')
-      assert.strictEqual(rel.object.index, arnaud.index)
+    it('should be related to other nodes', () => {
+      brice = graph.node('brice')
+      arnaud = graph.node('arnaud')
+      let briceKnowsArnaud = brice.rel('knows', arnaud)
+      assert.strictEqual(briceKnowsArnaud.constructor.name, 'Edge')
+      assert.strictEqual(briceKnowsArnaud.subject.index, brice.index)
+      assert.strictEqual(briceKnowsArnaud.predicate, 'knows')
+      assert.strictEqual(briceKnowsArnaud.object.index, arnaud.index)
     })
 
     it('should be saved (with relation)', done => {
@@ -117,19 +117,19 @@ describe('WGraph', () => {
           let rel = triplets.shift()
           assert.strictEqual(rel.predicate, 'knows')
           assert.strictEqual(rel.object, arnaud.index)
-          assert.strictEqual(triplets.shift().predicate, Edge.SELF_PREDICATE)
+          assert.strictEqual(triplets.shift().predicate, Node.SELF_PREDICATE)
           done()
         })
       }).catch(done)
     })
 
-    it('should search edges', done => {
-      let sacha = graph.edge('sacha')
+    it('should search nodes', done => {
+      let sacha = graph.node('sacha')
       sacha.save()
         .then(() => { return graph.search('brice', 'sacha') })
-        .then(edges => {
-          assert.deepEqual(Object.keys(edges), ['brice', 'sacha'])
-          assert.strictEqual(edges.brice.relations['knows:arnaud'].object.index, 'arnaud')
+        .then(nodes => {
+          assert.deepEqual(Object.keys(nodes), ['brice', 'sacha'])
+          assert.strictEqual(nodes.brice.edges['knows:arnaud'].object.index, 'arnaud')
           done()
         }).catch(done)
     })
@@ -150,39 +150,39 @@ describe('WGraph', () => {
 
   })
 
-  describe('Relations', () => {
+  describe('Edges', () => {
 
     let brice
     let arnaud
-    let rel
+    let briceKnowsArnaud
     let expRelTriplet
 
     before(() => {
-      brice = graph.edge('brice')
-      arnaud = graph.edge('arnaud')
-      rel = brice.rel('knows', arnaud)
+      brice = graph.node('brice')
+      arnaud = graph.node('arnaud')
+      briceKnowsArnaud = brice.rel('knows', arnaud)
       expRelTriplet = {subject: brice.index, predicate: 'knows', object: arnaud.index}
     })
 
     it('should be loaded', done => {
-      rel.load().then(() => {
-        assert.deepEqual(rel.triplet(), expRelTriplet)
+      briceKnowsArnaud.load().then(() => {
+        assert.deepEqual(briceKnowsArnaud.triplet(), expRelTriplet)
         done()
       }).catch(done);
     })
 
     it('should be saved', done => {
-      rel.save().then(() => {
-        assert.deepEqual(rel.triplet(), expRelTriplet)
+      briceKnowsArnaud.save().then(() => {
+        assert.deepEqual(briceKnowsArnaud.triplet(), expRelTriplet)
         done()
       }).catch(done);
     })
 
     it('should be deleted', done => {
-      rel.save()
-        .then(() => { return rel.del() })
+      briceKnowsArnaud.save()
+        .then(() => { return briceKnowsArnaud.del() })
         .then(triplet => {
-          rel.graph.graph.search(expRelTriplet, (err, triplets) => {
+          briceKnowsArnaud.graph.graph.search(expRelTriplet, (err, triplets) => {
             if (err) return done(err)
             assert.strictEqual(triplets.length, 0)
             done()
@@ -192,8 +192,8 @@ describe('WGraph', () => {
 
     it('should have properties', done => {
       let attrs = {since: '2015/11/01', colleague: true}
-      rel.props.set(attrs)
-        .then(() => { return rel.props.map() })
+      briceKnowsArnaud.props.set(attrs)
+        .then(() => { return briceKnowsArnaud.props.map() })
         .then(data => {
           assert.deepEqual(data, attrs)
           done()

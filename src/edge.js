@@ -1,90 +1,69 @@
 
+import util from 'util'
 import rsvp from 'rsvp'
 
 import NsProperties from './nsprops'
-import Relation from './relation'
-
-const SELF_PREDICATE = '_self'
 
 class Edge {
-
-	constructor(graph, index) {
-		this.graph = graph
-		this.index = index
-		this.props = new NsProperties('__props:edge:' + index, graph.properties)
-		this.relations = {}
+	
+	constructor(subject, predicate, object) {
+		this.subject = subject
+		this.predicate = predicate
+		this.object = object
+		this.graph = this.subject.graph
+		this.props = new NsProperties('__props:edge:' + this._relIndex(), this.graph.properties)
+		this.synchronized = false
 	}
+
+	_relIndex() { return this.subject.index + ':' + this.predicate + ':' + this.object.index }
+
+	triplet() { return this.graph.triplet(this.subject.index, this.predicate, this.object.index) }
 
 	load() {
 		return new rsvp.Promise((resolve, reject) => {
-			this.graph.graph.search(this.graph.triplet(this.index), (err, triplets) => {
+			let search = this.graph.triplet()
+			search.filter = triplet => {
+				return triplet.subject === this.subject.index
+					&& triplet.predicate === this.predicate
+					&& triplet.object === this.object.index
+			}
+			this.graph.graph.search(search, (err, triplets) => {
 				if (err) return reject(err)
-				triplets.forEach(triplet => {
-					if (triplet.predicate === SELF_PREDICATE) return
-					let rel = new Relation(this, triplet.predicate, new Edge(this, triplet.object))
-					this.relations[triplet.predicate + ':' + triplet.object] = rel
-				})
-				resolve(this)
+				if (!triplets.length) return resolve(this.triplet())
+				rsvp.all([
+					this.graph.node(this.subject.index).load(),
+					this.graph.node(this.object.index).load(),
+				]).then(nodes => {
+					this.subject = nodes[0]
+					this.object = nodes[1]
+					resolve(this)
+				}).catch(reject)
 			})
 		})
 	}
 
-	_triplets(includeSelf) {
-		let triplets = []
-		if (includeSelf || !Object.keys(this.relations).length)
-			triplets.push(this.graph.triplet(this.index, SELF_PREDICATE, this.index))
-		for (let i in this.relations) {
-			let rel = this.relations[i]
-			triplets.push(this.graph.triplet(this.index, rel.predicate, rel.object.index))
-		}
-		return triplets
-	}
-
-	save() {
-		return new rsvp.Promise((resolve, reject) => {
-			this.graph.graph.put(this._triplets(), err => {
-				if (err) return reject(err)
-				resolve(this)
-			})
-		})
-	}
-
-	standalone() { return !Object.keys(this.relations).length }
-
-	rel(predicate, edge, properties) {
-		let rel = new Relation(this, predicate, edge)
-		this.relations[predicate + ':' + edge.index] = rel
-		if (properties) rel.props.set(properties)
-		return rel
-	}
+	save() { return this.subject.save().then(() => { return this.load() }) }
 
 	del() {
 		return new rsvp.Promise((resolve, reject) => {
-			return this.load().then(() => {
-				let q = []
-				for (let i in this.relations) q.push(this.relations[i].del())
-				q.push(this.props.clear())
-				return rsvp.all(q).then(() => {
-					let tripletsTodel = this._triplets(true)
-					this.graph.graph.del(tripletsTodel, err => {
-						if (err) return reject(err)
-						resolve(tripletsTodel.length)
-					})
+			return this.props.del().then(() => {
+				this.graph.graph.del(this.triplet(), err => {
+					if (err) return reject(err)
+					resolve(this)
 				})
 			})
 		})
 	}
 
 	toString() {
-		let str = 'Edge[' + this.index
-		for (let i in this.relations)
-			str += '\n  ' + this.relations[i].toString()
-		str += '\n]'
-		return str
+		return util.format(
+			'Edge[%s %s %s]',
+			this.subject.index,
+			this.predicate,
+			this.object.index
+		)
 	}
-	
-}
 
-Edge.SELF_PREDICATE = SELF_PREDICATE
+}
 
 export default Edge
