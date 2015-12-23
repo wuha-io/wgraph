@@ -53,8 +53,10 @@ arnaud.save()
 ```
 ## Visualize
 
-	node lib/example/server.js
-	// check http://localhost
+	node [wgraph-lib]/lib/visualizer/server.js
+	// check http://localhost/?graph=C:\Users\John\source\a-levelgraph-folder
+
+Example :
 
 ![Logo](https://raw.githubusercontent.com/wuha-io/wgraph/master/screenshot.png)
 

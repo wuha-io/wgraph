@@ -1,6 +1,5 @@
-
 import assert from 'assert'
-import levelup from 'levelup'  
+import levelup from 'levelup'
 
 import LevelDbProperties from '../leveldbprops'
 import NsProperties from '../nsprops'
@@ -23,12 +22,16 @@ describe('LevelDbProperties', () => {
 
   it('should set properties into the namespace', done => {
     props.set('test', 'age', 28)
-      .then(() => { return props.get('test', 'age') })
-      .then(age => { 
+      .then(() => {
+        return props.get('test', 'age')
+      })
+      .then(age => {
         assert.strictEqual(age, 28)
         return props.set('test', 'sex', 'male')
       })
-      .then(() => { return props.map('test') })
+      .then(() => {
+        return props.map('test')
+      })
       .then(map => {
         assert.deepEqual(map, {age: 28, sex: 'male'})
         done()
@@ -37,25 +40,35 @@ describe('LevelDbProperties', () => {
 
   it('should get properties into the namespace', done => {
     props.set('test', 'age', 28)
-      .then(() => { return props.set('test', 'sex', 'male') })
-      .then(() => { return props.get('test', 'age') })
-      .then(() => { return props.get('test', 'age', 'sex') })
+      .then(() => {
+        return props.set('test', 'sex', 'male')
+      })
+      .then(() => {
+        return props.get('test', 'age')
+      })
+      .then(() => {
+        return props.get('test', 'age', 'sex')
+      })
       .then(props0 => {
         assert.deepEqual(props0, {age: 28, sex: 'male'})
         return props.get('test', ['sex', 'age'])
       }).then(props1 => {
-        assert.deepEqual(props1, {sex: 'male', age: 28})
-        done()
-      }).catch(done)
+      assert.deepEqual(props1, {sex: 'male', age: 28})
+      done()
+    }).catch(done)
   })
 
   it('should del properties into the namespace', done => {
     props.set('test', 'age', 28)
-      .then(() => { return props.get('test', 'age') })
+      .then(() => {
+        return props.get('test', 'age')
+      })
       .then(age => {
         assert.strictEqual(age, 28)
         return props.del('test', 'age')
-          .then(() => { return props.get('test', 'age') })
+          .then(() => {
+            return props.get('test', 'age')
+          })
       })
       .then(age => {
         assert.strictEqual(age, undefined)
@@ -66,7 +79,9 @@ describe('LevelDbProperties', () => {
   it('should be namespaced', done => {
     let testProps = new NsProperties('test', props)
     testProps.set('age', 42)
-      .then(() => { return testProps.map() })
+      .then(() => {
+        return testProps.map()
+      })
       .then(map => {
         assert.deepEqual(map, {age: 42, sex: 'male'})
         done()

@@ -1,8 +1,5 @@
 node_modules/
-bower_components/
 lib/test/db/
 lib/test/fgraph/
 lib/test/graph/
-lib/example/graph-point
-lib/example/graph-simple
 npm-debug.log

@@ -1,4 +1,3 @@
-
 import assert from 'assert'
 import rsvp from 'rsvp'
 
@@ -7,15 +6,15 @@ import Node from '../node'
 
 describe('WGraph', () => {
 
-	let graph
+  let graph
 
-	before(done => {
-		graph = new WGraph(__dirname + '/graph')
-    graph.clear().then(nbTriplets => {
+  before(done => {
+    graph = new WGraph(__dirname + '/graph')
+    graph.del().then(nbTriplets => {
       //console.log('%s deleted triplets', nbTriplets)
       done()
     }).catch(done)
-	})
+  })
 
   it('should build triplets', () => {
     let isVariable = (v, name) => {
@@ -80,18 +79,28 @@ describe('WGraph', () => {
     it('should have properties', done => {
       let brice = graph.node('brice')
       brice.props.clear()
-        .then(() => { return brice.props.map() })
+        .then(() => {
+          return brice.props.map()
+        })
         .then(data0 => {
           assert.deepEqual(data0, {})
           return brice.props.set('age', 28)
-            .then(() => { return brice.props.del('age') })
-            .then(() => { return brice.props.set({sex: 'female', age: 27}) })
-            .then(() => { return brice.props.set([['sex', 'male'], ['hair', 'brown']]) })
-            .then(() => { return brice.props.map() })
+            .then(() => {
+              return brice.props.del('age')
+            })
+            .then(() => {
+              return brice.props.set({sex: 'female', age: 27})
+            })
+            .then(() => {
+              return brice.props.set([['sex', 'male'], ['hair', 'brown']])
+            })
+            .then(() => {
+              return brice.props.map()
+            })
         }).then(data1 => {
-          assert.deepEqual(data1, {sex: 'male', age: 27, hair: 'brown'})
-          done()
-        }).catch(done)
+        assert.deepEqual(data1, {sex: 'male', age: 27, hair: 'brown'})
+        done()
+      }).catch(done)
     })
 
     let brice
@@ -126,7 +135,9 @@ describe('WGraph', () => {
     it('should search nodes', done => {
       let sacha = graph.node('sacha')
       sacha.save()
-        .then(() => { return graph.search('brice', 'sacha') })
+        .then(() => {
+          return graph.search('brice', 'sacha')
+        })
         .then(nodes => {
           assert.deepEqual(Object.keys(nodes), ['brice', 'sacha'])
           assert.strictEqual(nodes.brice.edges['knows:arnaud'].object.index, 'arnaud')
@@ -180,7 +191,9 @@ describe('WGraph', () => {
 
     it('should be deleted', done => {
       briceKnowsArnaud.save()
-        .then(() => { return briceKnowsArnaud.del() })
+        .then(() => {
+          return briceKnowsArnaud.del()
+        })
         .then(triplet => {
           briceKnowsArnaud.graph.graph.search(expRelTriplet, (err, triplets) => {
             if (err) return done(err)
@@ -193,7 +206,9 @@ describe('WGraph', () => {
     it('should have properties', done => {
       let attrs = {since: '2015/11/01', colleague: true}
       briceKnowsArnaud.props.set(attrs)
-        .then(() => { return briceKnowsArnaud.props.map() })
+        .then(() => {
+          return briceKnowsArnaud.props.map()
+        })
         .then(data => {
           assert.deepEqual(data, attrs)
           done()

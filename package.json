@@ -13,7 +13,7 @@
     "relation"
   ],
   "scripts": {
-    "build": "babel -d lib/ src/ --source-maps --ignore bower_components",
+    "build": "babel -d lib/ src/ --source-maps",
     "test": "mocha lib/test",
     "pretest": "npm run build",
     "prepublish": "npm run build"
@@ -28,7 +28,6 @@
     "url": "https://github.com/wuha-io/wgraph.git"
   },
   "dependencies": {
-    "express": "^4.13.3",
     "leveldown": "^1.4.3",
     "levelgraph": "^1.1.0",
     "levelup": "^1.3.1",
