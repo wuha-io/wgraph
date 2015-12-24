@@ -95,7 +95,7 @@ rsvp.all([
 
 ### Run the visualization server
 
-  node [wgraph-lib]/lib/visualizer/server.js
+    node [wgraph-lib]/lib/visualizer/server.js
   
 ### Open your browser with the graph absolute path
 
