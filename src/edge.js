@@ -11,7 +11,6 @@ class Edge {
     this.object = object
     this.graph = this.subject.graph
     this.props = new NsProperties('__props:edge:' + this._relIndex(), this.graph.properties)
-    this.synchronized = false
   }
 
   _relIndex() {

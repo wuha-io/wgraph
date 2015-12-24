@@ -15,7 +15,13 @@ let server = http.createServer((req, res) => {
   let indexHTML = String(fs.readFileSync(srcDir + '/index.html'))
   let query = url.parse(req.url, true).query
   if (!query.graph) return sendError('graph query parameter is required.')
-  new WGraph(query.graph).export().then(elements => {
+  let graph
+  try {
+    graph = new WGraph(query.graph)
+  } catch (e) {
+    return sendError(e)
+  }
+  graph.export(true, true).then(elements => {
     res.end(indexHTML.replace('$graphJSON', JSON.stringify(elements)))
   }).catch(sendError)
 });

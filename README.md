@@ -53,10 +53,53 @@ arnaud.save()
 ```
 ## Visualize
 
-	node [wgraph-lib]/lib/visualizer/server.js
-	// check http://localhost/?graph=C:\Users\John\source\a-levelgraph-folder
+### Create a graph
 
-Example :
+```javascript
+// [a-project-dir]/graph.js
+
+import util from 'util'
+import rsvp from 'rsvp'
+import WGraph from 'wgraph'
+
+let printExport = elements => console.log(util.inspect(elements))
+
+let g = new WGraph('simple-graph')
+let brice = g.node('brice', {age: 28})
+var arnaud = g.node('arnaud')
+var sacha = g.node('sacha')
+var antonin = g.node('antonin')
+
+brice.rel('knows', arnaud, {since: '2015/11/01'})
+brice.rel('knows', sacha, {someAttr: 42})
+arnaud.rel('knows', brice)
+arnaud.rel('knows', sacha)
+sacha.rel('knows', brice)
+sacha.rel('knows', arnaud)
+antonin.rel('knows', brice)
+antonin.rel('knows', arnaud, {since: '2015/11/01'})
+antonin.rel('directorOf', brice)
+antonin.rel('directorOf', arnaud)
+antonin.rel('love', antonin, {lovePower: 46.78})
+sacha.rel('directorOf', brice, {by: 'passion'})
+sacha.rel('directorOf', arnaud, {by: 'devotion'})
+
+rsvp.all([
+  brice.save(),
+  arnaud.save(),
+  sacha.save()
+]).then(() => {
+  return g.export().then(printExport)
+}).catch(console.error.bind(console))
+```
+
+### Run the visualization server
+
+  node [wgraph-lib]/lib/visualizer/server.js
+  
+### Open your browser with the graph absolute path
+
+	// http://localhost/?graph=[a-project-dir]/simple-graph
 
 ![Logo](https://raw.githubusercontent.com/wuha-io/wgraph/master/screenshot.png)
 
