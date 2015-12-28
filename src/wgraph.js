@@ -80,13 +80,14 @@ class WGraph {
       }
       this.graph.search(search, (err, triplets) => {
         if (err) return reject(err)
+        let result = {}
+        if (!triplets.length) return resolve(result)
         let nodes = triplets.map(triplet => triplet.subject)
           .filter((index, i, arr) => arr.indexOf(index) === i)
           .map(index => new Node(this, index).load())
         rsvp.all(nodes)
           .then(nodes => {
             if (args.length === 1) return resolve(nodes.shift())
-            var result = {}
             nodes.forEach(node => result[node.index] = node)
             resolve(result)
           }).catch(reject)

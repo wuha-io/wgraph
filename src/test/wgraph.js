@@ -132,17 +132,38 @@ describe('WGraph', () => {
       }).catch(done)
     })
 
-    it('should search nodes', done => {
-      let sacha = graph.node('sacha')
-      sacha.save()
-        .then(() => {
-          return graph.search('brice', 'sacha')
-        })
-        .then(nodes => {
-          assert.deepEqual(Object.keys(nodes), ['brice', 'sacha'])
-          assert.strictEqual(nodes.brice.edges['knows:arnaud'].object.index, 'arnaud')
+    describe('should search', () => {
+
+      it('#1 empty', done => {
+        graph.search('antonin').then(nodes => {
+          assert.deepEqual(nodes, {})
           done()
         }).catch(done)
+      })
+
+      it('#1 args', done => {
+        let antonin = graph.node('antonin')
+        let sacha = graph.node('sacha')
+        antonin.rel('knows', sacha);
+        rsvp.all([antonin.save(), sacha.save()])
+          .then(() => {
+            return graph.search('antonin', 'sacha')
+          })
+          .then(nodes => {
+            assert.deepEqual(Object.keys(nodes), ['sacha', 'antonin'])
+            assert.strictEqual(nodes.antonin.edges['knows:sacha'].object.index, 'sacha')
+            done()
+          }).catch(done)
+      })
+
+      it('#2 array', done => {
+        graph.search(['antonin', 'sacha'])
+          .then(nodes => {
+            assert.deepEqual(Object.keys(nodes), ['sacha', 'antonin'])
+            done()
+          }).catch(done)
+      })
+
     })
 
     it('should be deleted', done => {
